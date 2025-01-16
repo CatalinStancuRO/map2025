@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>GIROC</title>
+    <title>BORSA</title>
     <meta property="og:description" content="Use maplibre-gl-terradraw to draw a geometry in various forms such as point, line or polygon on your map." />
     <meta charset='utf-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -80,18 +80,18 @@
 <pre id="info"></pre>
 
 <form class="panel" action="/submit" method="POST">
-    <input type="text" name="input1" placeholder="Input 1" required>
-    <input type="text" name="input2" placeholder="Input 2" required>
-    <input type="text" name="input3" placeholder="Input 3" required>
-    <input type="text" name="input4" placeholder="Input 4" required>
+    <input type="text" name="input1" placeholder="Prenume" required>
+    <input type="text" name="input2" placeholder="Nume" required>
+    <input type="text" name="input3" placeholder="Telefon" required>
+    <input type="text" name="input4" placeholder="Adresa" required>
     <button type="submit">Submit</button>
 </form>
 
 <script>
     const map = new maplibregl.Map({
         container: 'map', // container id
-        zoom: 6,
-        center: [28.39085, 44.27574],
+        zoom: 14,
+        center: [24.66456888150838,47.65364357484703 ],
         pitch: 0,
         maxZoom: 18,
         maxPitch: 85,
@@ -110,6 +110,8 @@
                 osm: {
                     type: 'raster',
                     tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                    //http://mt3.google.com/vt/lyrs=y&hl=en&x=317&y=176&z=9
+                    //tiles:['http://mt2.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'],
                     tileSize: 256,
                     attribution: '&copy; OpenStreetMap Contributors',
                     maxzoom: 19
@@ -120,11 +122,11 @@
                     url: 'https://demotiles.maplibre.org/terrain-tiles/tiles.json',
                     tileSize: 256
                 },
-                hillshadeSource: {
-                    type: 'raster-dem',
-                    url: 'https://demotiles.maplibre.org/terrain-tiles/tiles.json',
-                    tileSize: 256
-                }
+                 hillshadeSource: {
+                     type: 'raster-dem',
+                //     url: 'https://demotiles.maplibre.org/terrain-tiles/tiles.json',
+                     tileSize: 256
+                 }
             },
             layers: [
                 {
