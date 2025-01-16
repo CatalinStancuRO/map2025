@@ -107,7 +107,7 @@ class Feature:
     geometry: Geometry = field(default_factory=Geometry)    
 
 @app.route('/', methods=['POST', 'GET'])
-@login_required
+#@login_required
 def testmap():
     return render_template('index.html')        
 
