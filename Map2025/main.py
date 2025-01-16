@@ -33,7 +33,7 @@ from auth.views import auth, login_manager
 
 app = Flask(__name__)
 
-app.secret_key = 'your_secret_key'  # Required for secure forms
+app.secret_key = 'catalin'  # Required for secure forms
 
 # Register authentication blueprint
 app.register_blueprint(auth, url_prefix='/auth')
@@ -109,7 +109,22 @@ class Feature:
 @app.route('/', methods=['POST', 'GET'])
 @login_required
 def testmap():
-    return render_template('testmap.html')        
+    return render_template('index.html')        
+
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    # Get the input values from the form
+    input1 = request.form.get('input1')
+    input2 = request.form.get('input2')
+    input3 = request.form.get('input3')
+    input4 = request.form.get('input4')
+
+    # Save the inputs to a text file
+    with open('inputs.txt', 'a') as file:
+        file.write(f"{input1}, {input2}, {input3}, {input4}\n")
+
+    return "Inputs saved successfully!"
 
 @app.route('/map2025/getjson', methods=['POST', 'GET'])
 def getjson():
@@ -185,7 +200,7 @@ def DB_conn():
     server = 'WIN-4OR15UPB94G,1433' # to specify an alternate port
     database = 'Log_DibalGis' 
     username = 'catalin' 
-    password = 'w9VAZXQbpwvppA' 
+    password = '--w9VAZXQbpwvppA--' 
     #conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
     conn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
     return conn

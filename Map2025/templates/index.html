@@ -8,8 +8,50 @@
     <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css' />
     <script src='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'></script>
     <style>
-        body { margin: 0; padding: 0; }
-        html, body, #map { height: 100%; }     
+         /* Full-page styling */
+         body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+        }
+        .panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent panel */
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .panel input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .panel button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .panel button:hover {
+            background-color: #45a049;
+        }
+      
         #info {
             display: block;
             position: absolute;
@@ -36,6 +78,15 @@
 />
 <div id="map"></div>
 <pre id="info"></pre>
+
+<form class="panel" action="/submit" method="POST">
+    <input type="text" name="input1" placeholder="Input 1" required>
+    <input type="text" name="input2" placeholder="Input 2" required>
+    <input type="text" name="input3" placeholder="Input 3" required>
+    <input type="text" name="input4" placeholder="Input 4" required>
+    <button type="submit">Submit</button>
+</form>
+
 <script>
     const map = new maplibregl.Map({
         container: 'map', // container id
