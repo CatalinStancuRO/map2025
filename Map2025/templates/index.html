@@ -93,7 +93,7 @@
         zoom: 14,
         center: [24.66456888150838,47.65364357484703 ],
         pitch: 0,
-        maxZoom: 18,
+        maxZoom: 23,
         maxPitch: 85,
         hash: true,
 
@@ -109,9 +109,11 @@
                 },
                 osm: {
                     type: 'raster',
-                    tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                    //tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                    tiles: ['https://api.maptiler.com/tiles/satellite-v2/{z}/{x}/{y}.jpg?key=rYNvZQGUjrT0AAoc8Pkp'],
                     //http://mt3.google.com/vt/lyrs=y&hl=en&x=317&y=176&z=9
                     //tiles:['http://mt2.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'],
+                    //https://cartes.app/?style=osm&choix+du+style=oui
                     tileSize: 256,
                     attribution: '&copy; OpenStreetMap Contributors',
                     maxzoom: 19
@@ -239,25 +241,25 @@ document.getElementById('info').innerHTML =
         JSON.stringify(e.lngLat.wrap())}`;
 });
 map.on('load', () => {
-    map.addSource('p1', {
-            'type': 'geojson',
-            'data': {
-                'type': 'Feature',
-                'properties': {},
-                'geometry': {
-                    'type': 'Polygon',
-                    'coordinates': [
-                        [
-                            [-30, -25],
-                            [-30, 35],
-                            [30, 35],
-                            [30, -25],
-                            [-30, -25]
-                        ]
-                    ]
-                }
-            }
-        });
+    // map.addSource('p1', {
+    //         'type': 'geojson',
+    //         'data': {
+    //             'type': 'Feature',
+    //             'properties': {},
+    //             'geometry': {
+    //                 'type': 'Polygon',
+    //                 'coordinates': [
+    //                     [
+    //                         [-30, -25],
+    //                         [-30, 35],
+    //                         [30, 35],
+    //                         [30, -25],
+    //                         [-30, -25]
+    //                     ]
+    //                 ]
+    //             }
+    //         }
+    //     });
         // Use it
         map.addLayer({
             'id': 'pattern-layer',
