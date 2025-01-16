@@ -26,7 +26,21 @@ from pyproj import Transformer
 from dataclasses import dataclass, field, asdict, is_dataclass
 from typing import List, Optional, Union
 
+
+from flask_login import LoginManager, login_required
+from auth.views import auth, login_manager
+
+
 app = Flask(__name__)
+
+app.secret_key = 'your_secret_key'  # Required for secure forms
+
+# Register authentication blueprint
+app.register_blueprint(auth, url_prefix='/auth')
+
+# Initialize Flask-Login
+login_manager.init_app(app)
+
 app.config['DEBUG'] = True
 
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -93,6 +107,7 @@ class Feature:
     geometry: Geometry = field(default_factory=Geometry)    
 
 @app.route('/', methods=['POST', 'GET'])
+@login_required
 def testmap():
     return render_template('testmap.html')        
 
