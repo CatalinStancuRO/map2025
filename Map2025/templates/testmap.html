@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>GIROC</title>
+    <meta property="og:description" content="Use maplibre-gl-terradraw to draw a geometry in various forms such as point, line or polygon on your map." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }     
+        #info {
+            display: block;
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            width: 350px;
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            font-size: 12px;
+            text-align: left;
+            color: red;
+            background: white;
+        }
+</style>           
+    </style>
+</head>
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@0.1.1/dist/maplibre-gl-terradraw.umd.js"></script>
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@0.1.1/dist/maplibre-gl-terradraw.css"
+/>
+<div id="map"></div>
+<pre id="info"></pre>
+<script>
+    const map = new maplibregl.Map({
+        container: 'map', // container id
+        zoom: 6,
+        center: [28.39085, 44.27574],
+        pitch: 0,
+        maxZoom: 18,
+        maxPitch: 85,
+        hash: true,
+
+        style: {
+            version: 8,
+            sources: {
+                stei: {
+                    type: 'raster',                    
+                    tiles: ['https://tiles.dibalgis.ro/data/BIHOR_STEI_2024/{z}/{x}/{y}.png?token=tileserveravani'],
+                    tileSize: 256,
+                    attribution: '&copy; Stei Contributors',
+                    maxzoom: 23
+                },
+                osm: {
+                    type: 'raster',
+                    tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                    tileSize: 256,
+                    attribution: '&copy; OpenStreetMap Contributors',
+                    maxzoom: 19
+                },
+                // Use a different source for terrain and hillshade layers, to improve render quality
+                terrainSource: {
+                    type: 'raster-dem',
+                    url: 'https://demotiles.maplibre.org/terrain-tiles/tiles.json',
+                    tileSize: 256
+                },
+                hillshadeSource: {
+                    type: 'raster-dem',
+                    url: 'https://demotiles.maplibre.org/terrain-tiles/tiles.json',
+                    tileSize: 256
+                }
+            },
+            layers: [
+                {
+                    id: 'osm',
+                    type: 'raster',
+                    source: 'osm'
+                },
+                {
+                    id: 'stei',
+                    type: 'raster',
+                    source: 'stei'
+                },                
+                {
+                    id: 'hills',
+                    type: 'hillshade',
+                    source: 'hillshadeSource',
+                    layout: {visibility: 'visible'},
+                    paint: {'hillshade-shadow-color': '#473B24'}
+                }
+            ],
+            terrain: {
+                source: 'terrainSource',
+                exaggeration: 1
+            },
+            sky: {}
+        },
+
+
+    });
+
+    const geoJsonUrls = ["https://dibal.dibalgis.ro/map2025/getjson"];
+	// List of GeoJSON URLs
+		// Add GeoJSON layers
+		geoJsonUrls.forEach((url, index) => {
+			fetch(url)
+				.then(response => response.json())
+				.then(data => {
+					map.addSource('geojson-${index}', {
+						type: "geojson",
+						data: data,
+					});
+
+					map.addLayer({
+						id: 'geojson-layer-${index}',
+						type: "fill",
+						source:'geojson-${index}',
+						paint: {
+                            'fill-color': 'rgba(1, 222, 10, 1)',
+                            'fill-outline-color': 'rgba(255, 1, 2, 1)',
+							"fill-color": [
+								"case",
+								["boolean", ["feature-state", "hover"], false],
+								"#ffcc00", // Hover color
+								"#0080ff", // Default color
+							],
+							"fill-opacity": 0.1, // More transparent inside color
+							
+						},
+					});
+
+					// //Add a 3D extrusion to simulate height (2 meters by default)
+					// map.addLayer({
+					// 	id: 'geojson-extrusion-${index}',
+					// 	type: "fill-extrusion",
+					// 	source: 'geojson-${index}',
+					// 	paint: {
+					// 		"fill-extrusion-color": [
+					// 			"case",
+					// 			["boolean", ["feature-state", "hover"], false],
+					// 			"#ffcc00", // Hover extrusion color
+					// 			"#0080ff", // Default extrusion color
+					// 		],
+					// 		"fill-extrusion-height": 2.5, // Height of 2 meters by default
+					// 		"fill-extrusion-opacity": 0.1, // Slight transparency for extrusion
+					// 	},
+					// });
+				})
+				.catch(error => console.error('Error loading GeoJSON from ${url}:', error));
+		});
+
+
+    // By default, all terra-draw drawing modes are enabled.
+    // you can disable some of modes in the constructor options if you want.
+    const draw = new MaplibreTerradrawControl({
+        modes: [
+            'point',
+            'linestring',
+            'polygon',
+            'rectangle',
+            'angled-rectangle',
+            'sensor',
+            'sector',
+            'circle',
+            'freehand',
+            'select'
+        ],
+        open: true,
+    });
+    
+        map.addControl(draw, 'top-right');
+
+
+map.on('mousemove', (e) => {
+document.getElementById('info').innerHTML =
+    // e.point is the x, y coordinates of the mousemove event relative
+    // to the top-left corner of the map
+    `${JSON.stringify(e.point)
+    }<br />${
+        // e.lngLat is the longitude, latitude geographical position of the event
+        JSON.stringify(e.lngLat.wrap())}`;
+});
+map.on('load', () => {
+    map.addSource('p1', {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'properties': {},
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [
+                        [
+                            [-30, -25],
+                            [-30, 35],
+                            [30, 35],
+                            [30, -25],
+                            [-30, -25]
+                        ]
+                    ]
+                }
+            }
+        });
+        // Use it
+        map.addLayer({
+            'id': 'pattern-layer',
+            'type': 'fill',
+            'source': 'p1',
+            'paint': {
+                'fill-color': 'yellow',
+                'fill-opacity': 0.8
+            }
+        });
+   } );        
+</script>
+</body>
+</html>
