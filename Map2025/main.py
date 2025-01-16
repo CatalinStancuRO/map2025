@@ -1,3 +1,4 @@
+#testABC
 #import cv2
 from flask import Flask, Response, json, jsonify, render_template, stream_template, stream_with_context, redirect
 from flask import request
@@ -90,7 +91,7 @@ class Feature:
     properties: Properties = field(default_factory=Properties)    
     geometry: Geometry = field(default_factory=Geometry)    
 
-@app.route('/map2025', methods=['POST', 'GET'])
+@app.route('/', methods=['POST', 'GET'])
 def testmap():
     return render_template('testmap.html')        
 
@@ -187,5 +188,5 @@ def DB_GetDate():
 
 # main driver function
 if __name__ == '__main__':    
-    app.run( port=12000, host='0.0.0.0', use_reloader=False)
+    app.run( port=5000, host='0.0.0.0', use_reloader=False)
     
